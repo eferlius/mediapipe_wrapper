@@ -23,7 +23,8 @@ def create_header(init = ['frame', 'time'], hands_names = ['h0'],  variables = [
         init.extend(['{}_{}{:02d}'.format(hand_name,var,num) for num in range(n_key_points) for var in variables])   
     return init
 
-def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_points = 21, n_hands = 1, decimals = 3):
+def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_points = 21, n_hands = 1, decimals = 3, landmark_WorldLandmark = 'landmark'):
+    assert landmark_WorldLandmark == 'landmark' or landmark_WorldLandmark == 'WorldLandmark'
     nan_list =  [np.nan]*(n_hands*(2+len(variables)*n_key_points)) # 2 for label and score of each hand
     if not results.multi_hand_landmarks or not results.multi_handedness:
         init.extend(nan_list)
@@ -38,7 +39,11 @@ def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_po
             score = np.around(score, decimals)
             hand_list = [label, score]
             # extract all keypoint of the hand
-            for index, landmark in enumerate(results.multi_hand_landmarks[i].landmark):
+            if landmark_WorldLandmark == 'landmark':
+                res = results.multi_hand_landmarks
+            elif landmark_WorldLandmark == 'WorldLandmark':
+                res = res = results.multi_hand_world_landmarks
+            for index, landmark in enumerate(res[i].landmark):
                 for var in variables:
                     if var == 'x':
                         value = landmark.x
@@ -50,8 +55,7 @@ def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_po
                         break
                     value = np.around(value, decimals)
                     hand_list.append(value)
-            hands_list.extend(hand_list)
-            
+            hands_list.extend(hand_list)            
         hands_list.extend([np.nan]*(len(nan_list)-len(hands_list)))
         return_list = hands_list
     return return_list

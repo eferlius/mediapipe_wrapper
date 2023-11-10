@@ -21,17 +21,22 @@ def create_header(init = ['frame', 'time'], variables = ['x','y','z'], n_key_poi
     init.extend(['{}{:02d}'.format(var,num) for num in range(n_key_points) for var in variables])   
     return init
 
-def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_points = 33, decimals = 3):
+def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_points = 33, decimals = 3, landmark_WorldLandmark = 'landmark'):
     return_list = init
-    if results.pose_landmarks:
-        for i in range(len(results.pose_landmarks.landmark)):
+    assert landmark_WorldLandmark == 'landmark' or landmark_WorldLandmark == 'WorldLandmark'
+    if landmark_WorldLandmark == 'landmark':
+        res = results.pose_landmarks
+    elif landmark_WorldLandmark == 'WorldLandmark':
+        res = results.pose_world_landmarks
+    if res:
+        for i in range(len(res.landmark)):
             for var in variables:
                 if var == 'x':
-                    value = results.pose_landmarks.landmark[i].x
+                    value = res.landmark[i].x
                 elif var == 'y':
-                    value = results.pose_landmarks.landmark[i].y
+                    value = res.landmark[i].y
                 elif var == 'z':
-                    value = results.pose_landmarks.landmark[i].z
+                    value = res.landmark[i].z
                 else:
                     break
                 value = np.around(value, decimals)
@@ -39,7 +44,8 @@ def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_po
         return return_list
     else:
         return_list.extend([np.nan]*len(variables)*n_key_points)
-        return return_list        
+    
+    return return_list        
     
 def draw_mp_on_image(img, results):
     annotated_image = img.copy()

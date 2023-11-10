@@ -25,13 +25,12 @@ def videoOrLiveRecognition(video_path):
 VIDEO_PATH = 0
 # VIDEO_PATH = 1
 # VIDEO_PATH = r'path to video'
-VIDEO_PATH = r'G:\Shared drives\Wheelchair Ergometer\Hand Wheel Relative Speed\Tests\20231107\01_raw\SM\P0_high_assistance_SM.mov'
 
 # if only one video or camera input
 LIST_VIDEOS = [VIDEO_PATH]
 # if considering all the videos in a folder
-FOLDER_WITH_VIDEOS_PATH = r'G:\Shared drives\Wheelchair Ergometer\Hand Wheel Relative Speed\Tests\20231107\01_raw\SM'
-LIST_VIDEOS = basic_utils.find_files_dirs.find_files_and_dirs_in_dir(FOLDER_WITH_VIDEOS_PATH, listExt = ['.mov'])[0]
+# FOLDER_WITH_VIDEOS_PATH = r'G:\Shared drives\Wheelchair Ergometer\Hand Wheel Relative Speed\Tests\20231107\01_raw\SM'
+# LIST_VIDEOS = basic_utils.find_files_dirs.find_files_and_dirs_in_dir(FOLDER_WITH_VIDEOS_PATH, listExt = ['.mov'])[0]
 
 
 # ----------------------------- FLAGS  
@@ -54,7 +53,7 @@ DISPLAY_VIDEO = False
 SAVE_VIDEO = True
 SAVE_CSV = True
 
-PRINT_EXECUTION = False
+PRINT_EXECUTION = True
 DECIMALS = 5
 
 # ----------------------------- PARAMETERS
@@ -63,12 +62,14 @@ SIMh = False # static_image_mode
 MNH = 1 # max_num_hands
 MDCh = 0.1 # min_detection_confidence
 MTCh = 0.5 # min_tracking_confidence
+L_WLh = 'WorldLandmark'
 
 mp_pose = mp.solutions.pose
 SIMp = False # static_image_mode
 MC = 1 # model_complexity
 MDCp = 0.1 # min_detection_confidence
 MTCp = 0.5 # min_tracking_confidence
+L_WLp = 'WorldLandmark'
 
 # to write on the image
 STRING_FORMAT = 'frame: {:05d} time: {:03.3f}'
@@ -189,7 +190,7 @@ for video_path in LIST_VIDEOS:
                         if SAVE_VIDEO:
                             video_writer_hand.write(frame_h)
                         if SAVE_CSV:
-                            row_h = mp_hands_functions.from_results_to_list(results, init = [counter, elapsed], n_hands = MNH, decimals = DECIMALS)
+                            row_h = mp_hands_functions.from_results_to_list(results, init = [counter, elapsed], n_hands = MNH, decimals = DECIMALS, landmark_WorldLandmark = L_WLh)
                             basic_utils.csv_ext.write_row_csv(csv_hand, row_h)
                     if POSE:
                         results = pose.process(orig_frame)
@@ -199,7 +200,7 @@ for video_path in LIST_VIDEOS:
                         if SAVE_VIDEO:
                             video_writer_pose.write(frame_p)
                         if SAVE_CSV:
-                            row_p = mp_pose_functions.from_results_to_list(results, init = [counter, elapsed], decimals = DECIMALS)
+                            row_p = mp_pose_functions.from_results_to_list(results, init = [counter, elapsed], decimals = DECIMALS, landmark_WorldLandmark = L_WLp)
                             basic_utils.csv_ext.write_row_csv(csv_pose, row_p)
                             
                 if PRINT_EXECUTION:
