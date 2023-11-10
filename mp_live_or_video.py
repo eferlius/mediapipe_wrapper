@@ -94,23 +94,24 @@ for video_path in LIST_VIDEOS:
 
     if SAVE_RAW_VIDEO or SAVE_RAW_CSV or SAVE_VIDEO or SAVE_CSV:
         folder_saving = os.path.join(FOLDER_SAVING, 'mp execution ' + basic_utils.this_moment.this_moment())
-
         os.makedirs(folder_saving, exist_ok = True)
+        pose_string = 'mc{}_mdc{}_mtc{}_{}'.format(MC, MDCp, MTCp, L_WLp)
+        hand_string = 'mn{}_mdc{}_mtc{}_{}'.format(MNH, MDCh, MTCh, L_WLh)
     if SAVE_RAW_CSV:
         csv_raw = os.path.join(folder_saving, 'times.csv')
     if SAVE_CSV:
         if HAND:
-            csv_hand = os.path.join(folder_saving, 'hand.csv')
+            csv_hand = os.path.join(folder_saving, 'hand_{}.csv'.format(hand_string))
         if POSE:
-            csv_pose = os.path.join(folder_saving, 'pose.csv')
+            csv_pose = os.path.join(folder_saving, 'pose_{}.csv'.format(pose_string))
             
     if SAVE_RAW_VIDEO:
         video_path_raw = os.path.join(folder_saving, 'raw.mp4')    
     if SAVE_VIDEO:
         if HAND:
-            video_path_hand = os.path.join(folder_saving, 'hand.mp4')
+            video_path_hand = os.path.join(folder_saving, 'hand_{}.mp4'.format(hand_string))
         if POSE:
-            video_path_pose = os.path.join(folder_saving, 'pose.mp4')
+            video_path_pose = os.path.join(folder_saving, 'pose_{}.mp4'.format(pose_string))
 
 
     with mp_hands.Hands(static_image_mode=SIMh, max_num_hands=MNH, min_detection_confidence=MDCh, min_tracking_confidence=MTCh) as hands:
