@@ -17,11 +17,11 @@ def find_results_on_img(img, stat_im_mode = False, mod_compl = 2, min_det_conf =
         results = pose.process(img)
         return results
 
-def create_header(init = ['frame', 'time'], variables = ['x','y','z'], n_key_points = 33):
+def create_header(init = ['frame', 'time'], variables = ['x','y','z', 'vis'], n_key_points = 33):
     init.extend(['{}{:02d}'.format(var,num) for num in range(n_key_points) for var in variables])   
     return init
 
-def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_points = 33, decimals = 3, landmark_WorldLandmark = 'landmark'):
+def from_results_to_list(results, init = [], variables = ['x','y','z', 'visibility'], n_key_points = 33, decimals = 3, landmark_WorldLandmark = 'landmark'):
     return_list = init
     assert landmark_WorldLandmark == 'landmark' or landmark_WorldLandmark == 'WorldLandmark'
     if landmark_WorldLandmark == 'landmark':
@@ -37,6 +37,8 @@ def from_results_to_list(results, init = [], variables = ['x','y','z'], n_key_po
                     value = res.landmark[i].y
                 elif var == 'z':
                     value = res.landmark[i].z
+                elif var == 'visibility':
+                    value = res.landmark[i].visibility
                 else:
                     break
                 value = np.around(value, decimals)

@@ -23,7 +23,7 @@ def videoOrLiveRecognition(video_path):
 
 # ----------------------------- INPUT
 VIDEO_PATH = 0
-# VIDEO_PATH = 1
+VIDEO_PATH = 1
 # VIDEO_PATH = r'path to video'
 
 # if only one video or camera input
@@ -35,12 +35,12 @@ LIST_VIDEOS = [VIDEO_PATH]
 
 # ----------------------------- FLAGS  
 # in case of live view
-LIVE_FREQ = 30 # int, estimation of the elapsed time between each iteration
+LIVE_FREQ = 20 # int, estimation of the elapsed time between each iteration
 MAX_LIVE_DURATION = 10 # seconds
 MAX_LIVE_FRAMES = 2000 # int
 
 # whether to analyze the hand or the pose or both
-HAND = True
+HAND = False
 POSE = True
 
 WRITE_ON_FRAME = True
@@ -49,7 +49,7 @@ DISPLAY_RAW_VIDEO = False
 SAVE_RAW_VIDEO = False
 SAVE_RAW_CSV = False
 # with elaborations of mediapipe
-DISPLAY_VIDEO = False
+DISPLAY_VIDEO = True
 SAVE_VIDEO = True
 SAVE_CSV = True
 
@@ -112,7 +112,6 @@ for video_path in LIST_VIDEOS:
             video_path_hand = os.path.join(folder_saving, 'hand_{}.mp4'.format(hand_string))
         if POSE:
             video_path_pose = os.path.join(folder_saving, 'pose_{}.mp4'.format(pose_string))
-
 
     with mp_hands.Hands(static_image_mode=SIMh, max_num_hands=MNH, min_detection_confidence=MDCh, min_tracking_confidence=MTCh) as hands:
         with mp_pose.Pose(static_image_mode=SIMp, model_complexity=MC, min_detection_confidence=MDCp, min_tracking_confidence=MTCp) as pose:
