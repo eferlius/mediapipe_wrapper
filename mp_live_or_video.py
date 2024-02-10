@@ -20,6 +20,17 @@ def videoOrLiveRecognition(video_path):
         return 'live'
     except ValueError:
         return 'video'
+    
+def get_correct_fourcc(extension):
+    if extension.upper() == '.MP4':
+        return cv2.VideoWriter_fourcc('X','V','I','D')
+    elif extension.upper() == '.AVI':
+        return  cv2.VideoWriter_fourcc('M','J','P','G')
+    elif extension.upper() == '.MOV':
+        return  cv2.VideoWriter_fourcc('M','J','P','G')
+    else:
+        Exception('Not recognized extesion {}'.format(extension))
+        return None
 
 # ----------------------------- INPUT
 VIDEO_PATH = 0
@@ -79,18 +90,22 @@ fontScale = 0.5
 color = (0, 0, 0) #BGR format
 thickness = 1
 
+# to save live videos
+VIDEO_EXTENSION = '.mp4'
+
 for video_path in LIST_VIDEOS:
     video_live = videoOrLiveRecognition(video_path)
 
     if video_live == 'live':
         FOLDER_SAVING = os.getcwd()
+        video_extension = VIDEO_EXTENSION
     if video_live == 'video':
         video_name = os.path.splitext(os.path.split(video_path)[1])[0]
+        video_extension = os.path.splitext(os.path.split(video_path)[1])[1]
         print('\n')
         print('='*80)
         print(video_name)
         FOLDER_SAVING = os.path.join(os.path.split(video_path)[0], video_name)
-
 
     if SAVE_RAW_VIDEO or SAVE_RAW_CSV or SAVE_VIDEO or SAVE_CSV:
         folder_saving = os.path.join(FOLDER_SAVING, 'mp execution ' + basic_utils.this_moment.this_moment())
@@ -106,12 +121,12 @@ for video_path in LIST_VIDEOS:
             csv_pose = os.path.join(folder_saving, 'pose_{}.csv'.format(pose_string))
             
     if SAVE_RAW_VIDEO:
-        video_path_raw = os.path.join(folder_saving, 'raw.mp4')    
+        video_path_raw = os.path.join(folder_saving, 'raw' + video_extension)    
     if SAVE_VIDEO:
         if HAND:
-            video_path_hand = os.path.join(folder_saving, 'hand_{}.mp4'.format(hand_string))
+            video_path_hand = os.path.join(folder_saving, 'hand_{}'.format(hand_string) + video_extension)
         if POSE:
-            video_path_pose = os.path.join(folder_saving, 'pose_{}.mp4'.format(pose_string))
+            video_path_pose = os.path.join(folder_saving, 'pose_{}'.format(hand_string) + video_extension)
 
     with mp_hands.Hands(static_image_mode=SIMh, max_num_hands=MNH, min_detection_confidence=MDCh, min_tracking_confidence=MTCh) as hands:
         with mp_pose.Pose(static_image_mode=SIMp, model_complexity=MC, min_detection_confidence=MDCp, min_tracking_confidence=MTCp) as pose:
@@ -119,7 +134,7 @@ for video_path in LIST_VIDEOS:
             capture = cv2.VideoCapture(video_path)
             frame_width = int(capture.get(3))
             frame_height = int(capture.get(4))
-            fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
+            fourcc = get_correct_fourcc(video_extension)
             
             if video_live == 'live':
                 video_freq = LIVE_FREQ 
