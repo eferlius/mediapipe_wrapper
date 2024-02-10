@@ -69,3 +69,34 @@ def draw_mp_on_image(img, results):
             mp_hands.HAND_CONNECTIONS, mp_drawing_styles.get_default_hand_landmarks_style(),
             mp_drawing_styles.get_default_hand_connections_style())
     return annotated_image
+
+def print_results(results, variables = ['x','y','z'], n_key_points = 21, n_hands = 1, decimals = 3, landmark_WorldLandmark = 'landmark'):
+    if not results.multi_hand_landmarks or not results.multi_handedness:
+        print('No results')
+    else:
+        n_found_hands = len(results.multi_hand_landmarks)
+        for i in range(n_found_hands):
+            # label = left or right
+            label = results.multi_handedness[i].classification[0].label
+            score = results.multi_handedness[i].classification[0].score
+            score = np.around(score, decimals)
+            hand_list = [label, score]
+            # extract all keypoint of the hand
+            if landmark_WorldLandmark == 'landmark':
+                res = results.multi_hand_landmarks
+            elif landmark_WorldLandmark == 'WorldLandmark':
+                res = res = results.multi_hand_world_landmarks
+            for index, landmark in enumerate(res[i].landmark):
+                for var in variables:
+                    if var == 'x':
+                        value = landmark.x
+                    elif var == 'y':
+                        value = landmark.y
+                    elif var == 'z':
+                        value = landmark.z
+                    else:
+                        break
+                    value = np.around(value, decimals)
+                    hand_list.append(value)
+            print(hand_list)
+    
